@@ -1,0 +1,167 @@
+<app-navbar>
+
+</app-navbar>
+<!-- START CONTAINER -->
+<div class="container-fluid">
+    <br/>
+    <!-- START CARD for VIDEO SOURCE INPUT -->
+    <div class="card shadow p-3 mb-5 bg-white rounded" *ngIf="isVideoSourceSelected">
+      <div class="row">
+        <div class="col-md-12 col-sm-12">
+          <h2 style="text-align: center;">Add A New Video</h2>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12 col-sm-12 col-centered">
+          <select class="custom-select" [(ngModel)]="videoSource" (ngModelChange)="onVideoSourceSelected()" required>
+            <option selected>List of Courses</option>
+            <option value="3. Series">Pandas Series</option>
+          </select>
+          <!-- <input (change)="onFileChange($event)" type="file" class="form-control-file" 
+            id="fileUpload" data-show-upload="true" data-show-caption="true"><br/>
+          <button type="submit" class="btn btn-primary" (click)="uploadVideo()">Upload</button> -->
+        </div>
+      </div>
+    </div>
+    <!-- END CARD for VIDEO SOURCE INPUT -->
+    <!-- START CARD -->
+    <div class="card shadow p-3 mb-5 bg-white rounded">
+      <!-- START ROW 0: Title -->
+      <div class="row">
+        <div class="col-md-12 col-sm-12">
+          <h2 style="text-align: center; color: #f8b654"><b>Rhea: Real-time, Revision Assistant for Courses</b></h2>
+        </div>
+      </div>
+      <!-- END ROW 0: Title -->
+      <!-- START ROW 1: Video Player -->
+      <div class="row">
+        <!-- START Column: Video Player -->
+        <div class="col-md-6 col-sm-12">
+          <div class="row">
+            <div class="embed-responsive embed-responsive-4by3">
+              <video controls id="videoPlayer" #videoPlayer autoplay (ended)="onVideoEnd()">
+                <source src="{{videoSource}}" type="video/mp4"/>
+                Browser not supported.
+              </video>
+            </div>
+          </div>
+          <br/>
+          <div class="row" *ngIf="keywords">
+            <kbd *ngFor="let hashtag of keywords">
+              {{hashtag}}&nbsp;&nbsp;&nbsp;&nbsp;
+            </kbd>
+          </div>
+        </div>
+        <!-- END Column: Video Player -->
+        <!-- START Column: DialogFlow chatbox -->
+        <div class="col-md-6 col-sm-12">
+          <div  class="chatform">
+            <app-message-list [messages]="messages"></app-message-list>
+            <app-message-form [message]="message" [messages]="messages" (onTopicIdentified)="seekToTopic($event)"></app-message-form>
+          </div>
+        </div>
+        <!-- END Column: DialogFlow chatbox -->
+      </div>
+      <!-- END ROW 1: Video Player -->
+      <br/>
+      <!-- START ROW 2: Transcript -->
+      <div class="row" *ngIf="transcript">
+        <div class="col-md-12 col-sm-12 scroll">
+          <div class="card" style="height: 300px;">
+            <div class="card-body">
+              <!-- START CARD TITLE -->
+              <h5 class="card-title" style="text-align: center; color: #f8b654"><b>Transcript</b></h5>
+              <!-- END CARD TITLE -->
+              <!-- START SENTENCES -->
+              <!-- <div class="sentence-container" *ngFor = "let para of transcriptClassified;"> -->
+              <div class="sentence-container" *ngFor = "let para of transcriptClassified;">
+                <div class="row">
+                  <div class="col-md-3 col-sm-3">
+                    <p class="card-text" (click)="seek(para.start, para.end)">
+                      {{para.topic}}
+                    </p>
+                  </div>
+                  <div class="col-md-9 col-sm-9">
+                    <p class="card-text" (click)="seek(para.start, para.end)">
+                      {{para.text}}
+                    </p>
+                  </div>
+                </div>
+                <hr/>
+              </div>
+              <!-- END SENTENCES -->
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- END ROW 2: Transcript -->
+    </div>
+    <!-- END CARD -->
+</div>
+<!-- END CONTAINER -->
+
+<!-- START MODAL TO ADD NOTE IN ARCHIVE -->
+<button id="addArchive" type="button" class="btn btn-primary" data-toggle="modal" data-target="#addArchiveModal" hidden></button>
+<div class="modal fade" id="addArchiveModal" tabindex="-1" role="dialog" aria-labelledby="addArchiveModalLabel" aria-hidden="true" style="color: black;">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Add A Note</h5>
+      </div>
+      <!-- Modal Body -->
+      <div class="modal-body">
+        <div class="form-label-group" *ngFor="let callback of callbacks">
+          <label for="note title">Note Title:</label>
+          <input type="text" name="note" [(ngModel)]="noteTitle" class="form-control" required="required"/>
+          <hr>
+          <p>{{callback.topic}}</p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <p>Start: {{callback.start}}; End: {{callback.end}}</p><br/>
+          Click the button to add note to the arhive.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <button type="submit" class="btn btn-primary" (click)="addNote(callback)" style="color: black;">Add Note</button>
+        </div>
+        <!-- <p>Please enter the OTP sent to you on the registered email, to verify your account.</p>
+        <div class="form-label-group">
+          <label for="otp">OTP: </label>
+          <input type="text" name="otp" [(ngModel)]="otp" class="form-control" required="required"/>
+        </div> -->
+      </div>
+      <!-- Modal Footer -->
+      <div class="modal-footer">
+        <button id="dismissModal" type="button" class="btn btn-secondary" data-dismiss="modal" hidden>Close</button>
+        <!--  -->
+      </div>
+    </div>
+  </div>
+</div>
+<!-- END ARCHIVE MODAL -->
+
+<!-- START MODAL TO VIEW FOR TOPIC FROM ARCHIVE -->
+<button id="getFromArchive" type="button" class="btn btn-primary" data-toggle="modal" data-target="#getFromArchiveModal" hidden></button>
+<div class="modal fade" id="getFromArchiveModal" tabindex="-1" role="dialog" aria-labelledby="getFromArchiveModalLabel" aria-hidden="true" style="color: black;">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Notes from your Archive</h5>
+      </div>
+      <!-- Modal Body -->
+      <div class="modal-body">
+        <div class="form-label-group" *ngFor="let fallback of fallbacks">
+          <h5>{{fallback.note_title}}</h5>
+          <p>{{fallback.topic}}</p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <p>Start: {{fallback.start}}; End: {{fallback.end}}</p><br/>
+          <hr>
+        </div>
+      </div>
+      <!-- Modal Footer -->
+      <div class="modal-footer">
+        <button id="dismissModal" type="button" class="btn btn-secondary" data-dismiss="modal" hidden>Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- END GET FROM ARCHIVE MODAL -->
+<ngx-toasta>
+  
+</ngx-toasta>

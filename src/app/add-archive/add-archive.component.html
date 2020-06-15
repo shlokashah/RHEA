@@ -1,0 +1,73 @@
+<app-navbar>
+
+</app-navbar>
+<!-- START CONTAINER -->
+<div class="container-fluid">
+  <br/><br/>
+  <!-- START CARD -->
+  <div class="card shadow p-3 mb-5 bg-white rounded">
+    <!-- START ROW 0: Title -->
+    <div class="row">
+      <div class="col-md-12 col-sm-12">
+        <h2 style="text-align: center; color: #f8b654"><b>Rhea: View Archives</b></h2>
+      </div>
+    </div>
+    <!-- END ROW 0: Title -->
+    <br/>
+    <!-- START ROW 1: Archives -->
+    <div class="row">
+      <div class="col-md-12 col-sm-12">
+        <table class="table table-hover">
+          <thead class="thead-dark">
+            <tr>
+              <th>Note Title</th>
+              <th>Created On</th>
+              <th>Topic</th>
+              <th>Video Name</th>
+              <th> </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let article of archives">
+              <td>{{article.note_title}}</td>
+              <td>{{article.created_on}}</td>
+              <td>{{article.topic}}</td>
+              <td>{{article.video_title}}</td>
+              <td>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#previewVideoModal" 
+                  (click)="onPreviewClicked(article)">
+                    Preview
+                </button> 
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <!-- END ROW 1: Archives -->
+  </div>
+</div>
+
+<!-- Preview Video Modal -->
+<div class="modal fade" id="previewVideoModal" tabindex="-1" role="dialog" aria-labelledby="previewVideoModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h5 class="modal-title" id="previewVideoLabel">Video Preview</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closePreview()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <!-- Modal Body -->
+      <div class="modal-body">
+        <div class="embed-responsive embed-responsive-4by3">
+          <video controls id="videoPlayer" #videoPlayer *ngIf="videoSource">
+            <source src="{{videoSource}}" type="video/mp4"/>
+            Browser not supported.
+          </video>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

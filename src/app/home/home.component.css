@@ -1,0 +1,27 @@
+/* .card-text { height: 42px; overflow-x: scroll; width: 100%; }
+
+.card-text p { width: 650px; word-break: break-word; } */
+
+.scroll {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.chatform{
+    width: 95%;
+    margin: 0 auto;
+    margin-top: 50px;
+}
+
+.col-centered{
+    margin: 0 auto;
+    float: none;
+}
+
+kbd {
+    margin: 1.5px;
+    background: white;
+    color: black;
+    border: 1px solid black;
+    border-radius: 2px;
+}
